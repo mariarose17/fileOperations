@@ -3,13 +3,7 @@ const yargs = require('yargs');
 const fs = require('fs');
 const file = 'namesFile2.json';
 var options = yargs.argv.options;
-
-// var obj = {
-//     names: []
-// };
-
-
-
+var name = yargs.argv._[0];
 
 
 const readData = () => {
@@ -23,11 +17,13 @@ const readData = () => {
 
 }
 
-const writeData = (data, callback) => {
-    fs.writeFile(file, JSON.stringify(data), (err) => {
-        if (err)
-            callback(err);
-        callback(null);
+const writeData = (data, cbFun) => {
+    fs.writeFileSync(file, JSON.stringify(data), (err) => {
+        if (err) {
+            cbFun(err);
+        }
+
+        cbFun(null);
 
     })
 
@@ -45,7 +41,7 @@ if (options == 'read') {
     const data = readData();
     printData(data);
 
-    
+
 }
 
 
@@ -53,47 +49,56 @@ if (options == 'read') {
 if (options == 'write') {
 
 
+    if (!name) {
+        throw new Error(`Name not found....`);
+    }
 
     const filedata = readData();
-    filedata.push(yargs.argv._[0]);
+    filedata.push(name);
 
     writeData(filedata, (err) => {
-        if (err) throw new Error('Something wrong with write');
-        console.log('Name written to file..' + yargs.argv._[0]);
+        if (err) {
+            throw new Error('Something wrong with write....');
+        }
+
+        console.log(`$(name) written to file... `);
     });
-    
+
 
 
 }
 
 if (options == 'remove') {
+    if (!name) {
+        throw new Error('Name not found..');
+    }
 
     let flag = 0;
     const names = readData();
 
 
     for (let index = 0; index < names.length; index++) {
-        if (names[index] == yargs.argv._[0]) {
+        if (names[index] == name) {
             flag = 1;
             names.splice(index, 1);
-            console.log("item removed");
+            console.log("Name removed.....");
+
+
             writeData(names, (err) => {
-                if (err) throw new Error('Something wrong ....');
+                if (err) throw new Error('Something went wrong ....');
 
 
             });
-
+            const datanames = readData();
+            printData(datanames);
 
         }
 
 
     }
 
-
-
-
     if (flag == 0) {
-        console.log("Element not found..");
+        console.log("Name not found..");
     }
 
 }
