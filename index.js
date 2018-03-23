@@ -18,7 +18,7 @@ const readData = () => {
 }
 
 const writeData = (data, cbFun) => {
-    fs.writeFileSync(file, JSON.stringify(data), (err) => {
+    fs.writeFile(file, JSON.stringify(data), (err) => {
         if (err) {
             cbFun(err);
         }
@@ -28,6 +28,8 @@ const writeData = (data, cbFun) => {
     })
 
 }
+
+
 
 const printData = (data) => {
     for (let index = 0; index < data.length; index++) {
@@ -61,7 +63,7 @@ if (options == 'write') {
             throw new Error('Something wrong with write....');
         }
 
-        console.log(`$(name) written to file... `);
+        console.log(`${name} written to file... `);
     });
 
 
@@ -83,12 +85,12 @@ if (options == 'remove') {
             names.splice(index, 1);
             console.log("Name removed.....");
 
+            fs.writeFileSync(file, JSON.stringify(names));
+            // writeData(names, (err) => {
+            //     if (err) throw new Error('Something went wrong ....');
 
-            writeData(names, (err) => {
-                if (err) throw new Error('Something went wrong ....');
 
-
-            });
+            // });
             const datanames = readData();
             printData(datanames);
 
